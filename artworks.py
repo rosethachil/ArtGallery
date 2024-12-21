@@ -10,11 +10,11 @@ def load_artworks(tab):
     style.map("Buttonstyle.TButton",foreground=[("active", "#FFFFFF")])
     style.map("Buttonstyle.TButton", background=[("!active", "#ad7a77"), ("active", "#a83d4c")])
     style.configure("EntryButton.TEntry",font=('Segoe UI Semibold', 12),fieldbackground="#cbb1a0",foreground="#5C4531",bordercolor="#735559",padding=[5, 2] )
-
+    
     artwork_frame = tk.Frame(tab, bg="#f8e5dc",borderwidth=2)
-    artwork_frame.grid(row=0, column=0, sticky="nsew")
+    artwork_frame.grid(row=1, column=0, sticky="nsew")
 
-    tab.grid_rowconfigure(0, weight=1)
+    tab.grid_rowconfigure(1, weight=1)
     tab.grid_columnconfigure(0, weight=1)
 
     canvas = tk.Canvas(artwork_frame, bg="#f8e5dc", highlightthickness=0)
@@ -22,10 +22,7 @@ def load_artworks(tab):
 
     scrollbar = tk.Scrollbar(artwork_frame, orient=tk.VERTICAL, command=canvas.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
-
     canvas.configure(yscrollcommand=scrollbar.set)
-    artwork_frame.grid_rowconfigure(0, weight=1)
-    artwork_frame.grid_columnconfigure(0, weight=1)
 
     Totlist = tk.Frame(canvas, bg="#f8e5dc")
     canvas.create_window((0, 0), window=Totlist, anchor="nw")
@@ -33,48 +30,67 @@ def load_artworks(tab):
     canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
     def refresh():
-        row=1
-        for widget in Totlist.winfo_children():
+        for widget in artwork_frame.winfo_children():
             widget.destroy()
-        artists = fetch_data("SELECT * FROM Artists")
-        artworks = fetch_data("SELECT * FROM Artworks")
-        ArtWorkImages=fetch_data("SELECT * FROM images")
-        if not artworks:
-            tk.Label(Totlist, text="No artwork found", font=('Lucida Sans Typewriter', 10), bg="#fbf2ee").grid(row=row,column=0, columnspan=3, sticky="ew")
-            row+=1
-        for artist in artists:
-            for artwork in artworks:
-                artwork_id = artwork[0]
-                tk.Label(Totlist,text=f"Artwork ID: {artwork[0]}",font=('Palatino Linotype', 12),bg="#fbf2ee").grid(row=row,column=0,sticky="ew")
-                row+=1
-                tk.Label(Totlist, text=f"Art Work Title: {artwork[2]}", font=('Palatino Linotype', 14),bg="#fbf2ee").grid(row=row,column=0,sticky="ew")
-                row+=1
-                if ArtWorkImages and ArtWorkImages[0]: 
-                    img_path = ArtWorkImages[0][2]
-                    try:
-                        img = Image.open(img_path)
-                        img = img.resize((200, 200))
-                        img_tk = ImageTk.PhotoImage(img)
-                        image_label = tk.Label(Totlist, image=img_tk, bg="#fbf2ee")
-                        image_label.image = img_tk
-                        image_label.grid(row=row, column=0, pady=5)
-                        row+=1
-                    except Exception as e:
-                        tk.Label(Totlist, text="Error loading image: {e}",font=('Lucida Sans Typewriter', 10), bg="#fbf2ee").grid(row=row,column=0, columnspan=3, sticky="ew")
-                        row+=1
-                else:
-                    tk.Label(Totlist, text="No valid image path found in the database.",font=('Lucida Sans Typewriter', 10), bg="#fbf2ee").grid(row=row,column=0, columnspan=3, sticky="ew")
-                    row+=1
 
-                tk.Label(Totlist, text=f"Artist Name: {artist[1]}", font=('Palatino Linotype', 14),bg="#fbf2ee").grid(row=row,column=0,sticky="ew")
-                row+=1
-                tk.Label(Totlist, text=f"Year: {artwork[3]}", font=('Palatino Linotype', 14),bg="#fbf2ee").grid(row=row,column=0,sticky="ew")
-                row+=1
-                delete_btn = ttk.Button(Totlist, text="Delete", style="Buttonstyle.TButton", command=lambda artist_id=artwork_id: delete_artwork(artwork_id))
-                delete_btn.grid(row=row,column=0, padx=10, pady=5)
-                edit_btn = ttk.Button(Totlist, text="Edit", style="Buttonstyle.TButton", command=lambda artist_id=artwork_id: edit_artwork_details(artist_id))
-                edit_btn.grid(row=row,column=1, padx=10, pady=5)
+        query = """
+            SELECT Artworks.id, Artworks.title, Artworks.year, Artists.name, Artworks.image_path
+            FROM Artworks
+            JOIN Artists ON Artworks.artist_id = Artists.id
+        """
 
+        try:
+            artwork_data = fetch_data(query)
+
+            if not artwork_data:
+                tk.Label(artwork_frame, text="No artworks found.", font=("Sitka Text", 12)).pack()
+                return
+            row = 0
+            for artwork_id, title, year, artist_name, image_path in artwork_data:
+            # Artwork details
+                details_text = f"ID: {artwork_id}, Title: {title}, Year: {year}, Artist: {artist_name}"
+                tk.Label(artwork_frame, text=details_text, font=("Sitka Text", 12), bg="#f8e5dc").grid(row=row, column=0, columnspan=2, sticky="w", padx=10, pady=5)
+                try:
+                    img = Image.open(image_path)
+                    img = img.resize((150, 150), Image.ANTIALIAS)
+                    img_tk = ImageTk.PhotoImage(img)
+                    img_label = tk.Label(artwork_frame, image=img_tk, bg="#f8e5dc")
+                    img_label.image = img_tk 
+                    img_label.grid(row=row, column=2, padx=10, pady=5)
+                except Exception:
+                    tk.Label(artwork_frame, text="Image not found", font=("Sitka Text", 10), bg="#f8e5dc").grid(row=row, column=2, padx=10, pady=5)
+                delete_btn = ttk.Button(
+                    artwork_frame,
+                    text="Delete",
+                    command=lambda artwork_id=artwork_id: delete_artwork(artwork_id)
+                )
+                delete_btn.grid(row=row, column=3, padx=10)
+                edit_btn = ttk.Button(
+                    artwork_frame,
+                    text="Edit",
+                    command=lambda artwork_id=artwork_id: edit_artwork_details(artwork_id)
+                )
+                edit_btn.grid(row=row, column=4, padx=10)
+                row += 1
+
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while refreshing: {e}")
+
+    
+    def create_add_btn():
+        name=ttk.Label(tab,text="Enter Name: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        name.grid(row=1,column=0,padx=10,pady=10)
+        enter_name = ttk.Entry(tab, style="EntryButton.TEntry")
+        enter_name.grid(row=1,column=1,padx=10,pady=10)
+
+        bio=ttk.Label(tab,text="Enter Bio: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        bio.grid(row=1,column=2,padx=10,pady=10)
+        enter_bio=ttk.Entry(tab,style="EntryButton.TEntry")
+        enter_bio.grid(row=1,column=3,padx=10,pady=10)
+
+        add_button=ttk.Button(tab,text="Add Artist Details",style="Buttonstyle.TButton")
+        add_button.grid(row=1,column=4,padx=10,pady=10)
+    
     def delete_artwork(id):
         if id:
             execute_query("DELETE FROM Artworks WHERE id = (%s)", (id,))
@@ -140,4 +156,8 @@ def load_artworks(tab):
         save_btn = ttk.Button(edit_window, text="Save Changes", style="Buttonstyle.TButton", command=save_changes)
         save_btn.pack(pady=20)
 
+    add_new_btn=ttk.Button(tab,text="Add new Artwork",command=create_add_btn,style="Buttonstyle.TButton")
+    add_new_btn.grid(row=0,column=1,padx=10,pady=10,sticky="nw")
+    add_new_btn=ttk.Button(tab,text="Add new Artwork",command=create_add_btn,style="Buttonstyle.TButton")
+    add_new_btn.grid(row=0,column=2,padx=10,pady=10,sticky="nw")
     refresh()
