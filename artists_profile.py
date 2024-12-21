@@ -160,6 +160,7 @@ def load_artist_profile(tab):
     def delete_artist(id):
         if id:
             execute_query("DELETE FROM Artists WHERE id = (%s)", (id,))
+            execute_query("DELETE FROM Artworks WHERE artist_id = (%s)", (id,))
             refresh_list()
 
 
