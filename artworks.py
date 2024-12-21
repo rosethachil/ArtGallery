@@ -96,7 +96,9 @@ def load_artworks(tab):
         year=enter_year.get()
         artist_id=enter_id.get()
         image_path=enter_pic.get()
-        artwork_id=execute_query("INSERT INTO Artworks (title,artist_id,year) VALUES (%s, %s,%s) RETURNING id", (title,artist_id,year))
+        cursor=execute_query("INSERT INTO Artworks (title,artist_id,year) VALUES (%s, %s,%s)", (title,artist_id,year),return_cursor=True)
+        if cursor:
+            artwork_id = cursor.lastrowid
         execute_query("INSERT INTO images (artwork_id,image_path) VALUES (%s,%s)", (artwork_id,image_path))
 
     add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_detail,style="Buttonstyle.TButton")

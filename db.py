@@ -13,15 +13,23 @@ def connect_to_db():    # Connect to MySQL
 def fetch_data(query, params=None):
     connection = connect_to_db()
     cursor = connection.cursor()    #   acts as pointer to dbms entries
-    cursor.execute(query, params or ())     
-    data = cursor.fetchall()
-    connection.close()
+    try: 
+        cursor.execute(query, params or ())     
+        data = cursor.fetchall()
+    finally:
+        cursor.close()
+        connection.close()
     return data
 
 # This function to execute INSERT/UPDATE/DELETE queries
-def execute_query(query, params=None):
+def execute_query(query, params=None,return_cursor=False):
     connection = connect_to_db()
     cursor = connection.cursor()
-    cursor.execute(query, params or ())
-    connection.commit()
-    connection.close()
+    try:
+        cursor.execute(query, params or ())
+        connection.commit()
+        if return_cursor:
+            return cursor
+    finally:
+        cursor.close()
+        connection.close()
