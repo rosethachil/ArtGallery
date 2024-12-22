@@ -1,6 +1,6 @@
 import mysql.connector
 
-def connect_to_db():    # Connect to MySQL
+def connect_to_db():  # connect to sql from python
     db = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -9,10 +9,9 @@ def connect_to_db():    # Connect to MySQL
     )
     return db
 
-# This function to execute SELECT queries
 def fetch_data(query, params=None):
     connection = connect_to_db()
-    cursor = connection.cursor()    #   acts as pointer to dbms entries
+    cursor = connection.cursor()    #   this acts as pointer to db entries
     try: 
         cursor.execute(query, params or ())     
         data = cursor.fetchall()
@@ -21,7 +20,7 @@ def fetch_data(query, params=None):
         connection.close()
     return data
 
-# This function to execute INSERT/UPDATE/DELETE queries
+
 def execute_query(query, params=None,return_cursor=False):
     connection = connect_to_db()
     cursor = connection.cursor()

@@ -35,4 +35,5 @@ load_artworks(artwork_tab)
 exhibitions_tab = tk.Frame(notebook, bg="#f8e5dc",padx=10,pady=10)
 notebook.add(exhibitions_tab, text="Exhibitions")
 
+
 root.mainloop()
