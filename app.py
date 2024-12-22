@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from artists_profile import load_artist_profile
 from artworks import load_artworks
+from exhibitions import load_exhibitions_profile
 
 root = tk.Tk()
 print(root)
@@ -34,6 +35,7 @@ load_artworks(artwork_tab)
 
 exhibitions_tab = tk.Frame(notebook, bg="#f8e5dc",padx=10,pady=10)
 notebook.add(exhibitions_tab, text="Exhibitions")
+load_exhibitions_profile(exhibitions_tab)
 
 
 root.mainloop()
