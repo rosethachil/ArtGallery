@@ -13,6 +13,17 @@ def load_artworks(tab):
     style.map("Buttonstyle.TButton", background=[("!active", "#ad7a77"), ("active", "#a83d4c")])
     style.configure("EntryButton.TEntry", font=('Segoe UI Semibold', 12), fieldbackground="#cbb1a0", foreground="#5C4531", bordercolor="#735559", padding=[5, 2])
 
+    edit_image_path = "C:/Users/Rose J Thachil/Documents/codes/ArtGallery/images/edit-text.png"
+    delete_image_path = "C:/Users/Rose J Thachil/Documents/codes/ArtGallery/images/bin.png"
+
+# Open and resize the images
+    edit_image_pillow = Image.open(edit_image_path).resize((15,15), Image.Resampling.LANCZOS)
+    delete_image_pillow = Image.open(delete_image_path).resize((15,15), Image.Resampling.LANCZOS)
+
+# Convert to PhotoImage
+    edit_image = ImageTk.PhotoImage(edit_image_pillow)
+    delete_image = ImageTk.PhotoImage(delete_image_pillow)
+
     # Container frame for dynamic content
     content_frame = tk.Frame(tab, bg="#f8e5dc", borderwidth=2)
     content_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
@@ -135,6 +146,11 @@ def load_artworks(tab):
                     img_label.image = img_tk
                     img_label.grid(row=row, column=0, padx=10, pady=5,columnspan=2)
                     row+=1
+                    edit_button = ttk.Button(Totlist, text="Edit",image=edit_image, compound="left", style="Buttonstyle.TButton")
+                    edit_button.grid(row=row, column=0, padx=10, pady=10)
+                    delete_button = ttk.Button(Totlist,text="Delete", image=delete_image, compound="left", style="Buttonstyle.TButton")
+                    delete_button.grid(row=row, column=1, padx=10, pady=10)
+                    row+=1
                     tk.Label(Totlist, text="-"*50,bg="#fdf3ee").grid(row=row,column=0,columnspan=3,sticky="ew")
                     row+=1
                 except Exception:
@@ -142,6 +158,7 @@ def load_artworks(tab):
             else:
                 print("No image path found for this artwork.")
             row +=1
+            
         container_frame.update_idletasks()
         canvas.configure(scrollregion=canvas.bbox("all"))
             
