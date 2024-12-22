@@ -146,9 +146,9 @@ def load_artworks(tab):
                     img_label.image = img_tk
                     img_label.grid(row=row, column=0, padx=10, pady=5,columnspan=2)
                     row+=1
-                    edit_button = ttk.Button(Totlist, text="Edit",image=edit_image, compound="left", style="Buttonstyle.TButton")
+                    edit_button = ttk.Button(Totlist, text="Edit",image=edit_image,command=lambda artwork_id=artwork_id: edit_details(artwork_id), compound="left", style="Buttonstyle.TButton")
                     edit_button.grid(row=row, column=0, padx=10, pady=10)
-                    delete_button = ttk.Button(Totlist,text="Delete", image=delete_image, compound="left", style="Buttonstyle.TButton")
+                    delete_button = ttk.Button(Totlist,text="Delete", image=delete_image,command=lambda artwork_id=artwork_id: delete_record(artwork_id), compound="left", style="Buttonstyle.TButton")
                     delete_button.grid(row=row, column=1, padx=10, pady=10)
                     row+=1
                     tk.Label(Totlist, text="-"*50,bg="#fdf3ee").grid(row=row,column=0,columnspan=3,sticky="ew")
@@ -161,7 +161,73 @@ def load_artworks(tab):
             
         container_frame.update_idletasks()
         canvas.configure(scrollregion=canvas.bbox("all"))
-            
+    
+    def delete_record(id):
+        if id:
+            execute_query("DELETE FROM images WHERE artwork_id = %s", (id,))
+            execute_query("DELETE FROM Artworks WHERE id = %s", (id,))
+            refresh()
+
+    def edit_details(id):
+        details = fetch_data("SELECT id, title, year, artist_id FROM Artworks WHERE id = %s", (id,))
+        if not details:
+            messagebox.showerror("Error", "Artwork not found!")
+            return
+
+        artwork = details[0]  # Fetch the first (and only) result
+        current_id, current_title, current_year, current_artist_id = artwork
+
+    # Create a popup window
+        popup = tk.Toplevel()
+        popup.title(f"Edit Artwork ID {id}")
+        popup.geometry("400x400")
+        popup.configure(bg="#fdf3ee")
+
+    # Title Entry
+        tk.Label(popup, text="Title:", font=("Sitka Text", 12), bg="#fdf3ee").grid(row=0, column=0, padx=10, pady=5, sticky="e")
+        title_entry = tk.Entry(popup, font=("Sitka Text", 12))
+        title_entry.insert(0, current_title)
+        title_entry.grid(row=0, column=1, padx=10, pady=5)
+
+    # Year Entry
+        tk.Label(popup, text="Year:", font=("Sitka Text", 12), bg="#fdf3ee").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+        year_entry = tk.Entry(popup, font=("Sitka Text", 12))
+        year_entry.insert(0, current_year)
+        year_entry.grid(row=1, column=1, padx=10, pady=5)
+
+    # Artist Dropdown
+        tk.Label(popup, text="Artist:", font=("Sitka Text", 12), bg="#fdf3ee").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        artist_details = fetch_data("SELECT id, name FROM Artists")
+        artist_dropdown_values = [f"{artist[0]} - {artist[1]}" for artist in artist_details]
+        artist_dropdown = ttk.Combobox(popup, values=artist_dropdown_values, font=("Sitka Text", 12), state="readonly")
+        artist_dropdown.set(f"{current_artist_id} - {next((artist[1] for artist in artist_details if artist[0] == current_artist_id), 'Unknown')}")
+        artist_dropdown.grid(row=2, column=1, padx=10, pady=5)
+
+    # Save Button
+        def save_changes():
+            new_title = title_entry.get()
+            new_year = year_entry.get()
+            selected_artist = artist_dropdown.get().split(" - ")[0]  # Extract ID
+
+            if not new_title or not new_year or not selected_artist:
+                messagebox.showerror("Error", "All fields must be filled.")
+                return
+
+            try:
+                execute_query("UPDATE Artworks SET title = %s, year = %s, artist_id = %s WHERE id = %s",(new_title, new_year, selected_artist, id))
+                messagebox.showinfo("Success", "Artwork details updated successfully.")
+                popup.destroy()
+                refresh()  # Refresh the display
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to update artwork: {e}")
+
+        save_button = ttk.Button(popup, text="Save", command=save_changes, style="Buttonstyle.TButton")
+        save_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+    # Cancel Button
+        cancel_button = ttk.Button(popup, text="Cancel", command=popup.destroy, style="Buttonstyle.TButton")
+        cancel_button.grid(row=4, column=0, columnspan=2, pady=10)
+
 
     def select_picture():
         file_path = filedialog.askopenfilename(title="Select an Image", filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
