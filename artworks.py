@@ -84,7 +84,6 @@ def load_artworks(tab):
     combobox.grid(pady=10)
 
     def on_select(event):
-    # Get the selected artist name from the combobox
         selected_name = combobox.get()
     
     # Find the corresponding artist ID for the selected name
@@ -223,11 +222,8 @@ def load_artworks(tab):
 
         save_button = ttk.Button(popup, text="Save", command=save_changes, style="Buttonstyle.TButton")
         save_button.grid(row=3, column=0, columnspan=2, pady=10)
-
-    # Cancel Button
         cancel_button = ttk.Button(popup, text="Cancel", command=popup.destroy, style="Buttonstyle.TButton")
         cancel_button.grid(row=4, column=0, columnspan=2, pady=10)
-
 
     def select_picture():
         file_path = filedialog.askopenfilename(title="Select an Image", filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
@@ -237,9 +233,6 @@ def load_artworks(tab):
             enter_pic.delete(0, tk.END)
             enter_pic.insert(0, file_path)
 
-    select_pic=ttk.Button(add_details_frame,text="Select Picture",command=select_picture,style="Buttonstyle.TButton")
-    select_pic.grid(row=4,column=2,padx=10,pady=10,sticky="nw")
-    
     def add_artwork_detail():
         title=enter_title.get()
         year=enter_year.get()
@@ -252,5 +245,7 @@ def load_artworks(tab):
         refresh()
 
     refresh()
+    select_pic=ttk.Button(add_details_frame,text="Select Picture",command=select_picture,style="Buttonstyle.TButton")
+    select_pic.grid(row=4,column=2,padx=10,pady=10,sticky="nw")
     add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_detail,style="Buttonstyle.TButton")
     add_new_btn.grid(row=5,column=0,padx=10,pady=10,sticky="nsew")
