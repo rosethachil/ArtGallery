@@ -7,7 +7,7 @@ from exhibitions import load_exhibitions_profile
 root = tk.Tk()
 print(root)
 root.title("Digital Art Gallery")
-root.geometry("960x750")
+root.geometry("1000x750")
 root.config(bg="#735559")
 
 style = ttk.Style()

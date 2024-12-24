@@ -243,6 +243,10 @@ def load_artworks(tab):
             artwork_id = cursor.lastrowid
         execute_query("INSERT INTO images (artwork_id,image_path) VALUES (%s,%s)", (artwork_id,image_path))
         refresh()
+        enter_title.delete(0, tk.END)
+        enter_year.delete(0, tk.END)
+        enter_id.delete(0, tk.END)
+        enter_pic.delete(0, tk.END)
 
     refresh()
     select_pic=ttk.Button(add_details_frame,text="Select Picture",command=select_picture,style="Buttonstyle.TButton")

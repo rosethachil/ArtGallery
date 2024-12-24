@@ -4,6 +4,12 @@ from tkinter import messagebox
 from db import fetch_data,execute_query
 
 def load_artist_profile(tab):
+
+    tab.grid_columnconfigure(0, weight=1)
+    tab.grid_columnconfigure(1, weight=1)
+    tab.grid_columnconfigure(5, weight=1)
+    tab.grid_columnconfigure(6, weight=1)
+
     frame = tk.Frame(tab, bg="#fbf2ee",borderwidth=2)
     frame.grid(row=0, rowspan=15, column=0, columnspan=3, pady=15, padx=15, sticky="nsew")
 
@@ -13,6 +19,8 @@ def load_artist_profile(tab):
     scrollbar = tk.Scrollbar(frame, orient=tk.VERTICAL, command=canvas.yview)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
+    canvas.update_idletasks()
+    canvas.configure(scrollregion=canvas.bbox("all"))
     canvas.configure(yscrollcommand=scrollbar.set)
     canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
     Totlist = tk.Frame(canvas, bg="#fbf2ee")
@@ -29,17 +37,17 @@ def load_artist_profile(tab):
         clear_row(2, tab)
         clear_row(3, tab)
         name=ttk.Label(tab,text="Enter Name: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-        name.grid(row=1,column=7,padx=10,pady=10)
+        name.grid(row=1,column=5,padx=10,pady=10)
         enter_name = ttk.Entry(tab, style="EntryButton.TEntry")
-        enter_name.grid(row=1,column=8,padx=10,pady=10)
+        enter_name.grid(row=1,column=6,padx=10,pady=10)
 
         bio=ttk.Label(tab,text="Enter Bio: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-        bio.grid(row=2,column=7,padx=10,pady=10)
+        bio.grid(row=2,column=5,padx=10,pady=10)
         enter_bio=ttk.Entry(tab,style="EntryButton.TEntry")
-        enter_bio.grid(row=2,column=8,padx=10,pady=10)
+        enter_bio.grid(row=2,column=6,padx=10,pady=10)
 
         add_button=ttk.Button(tab,text="Add Artist Details",style="Buttonstyle.TButton",command=lambda:add_artist(enter_name,enter_bio))
-        add_button.grid(row=3,column=7,padx=10,pady=10)
+        add_button.grid(row=3,column=5,padx=10,pady=10)
         
     def add_artist(enter_name,enter_bio):
         name = enter_name.get()
@@ -51,17 +59,20 @@ def load_artist_profile(tab):
             messagebox.showerror("Error", "Name is required")
         enter_name.delete(0,tk.END)
         enter_bio.delete(0,tk.END)
+        canvas.update_idletasks()  # Process all pending geometry changes
+        canvas.configure(scrollregion=canvas.bbox("all"))  # Update scrollable region
+
 
     def create_search_btn():
         clear_row(1, tab)
         clear_row(2, tab)
         clear_row(3, tab)
         name=ttk.Label(tab,text="Enter Name: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-        name.grid(row=1,column=7,padx=10,pady=10)
+        name.grid(row=1,column=5,padx=10,pady=10)
         enter_name=ttk.Entry(tab,style="EntryButton.TEntry")
-        enter_name.grid(row=1,column=8,padx=10,pady=10)
+        enter_name.grid(row=1,column=6,padx=10,pady=10)
         search_btn=ttk.Button(tab,text="Find Artist details",style="Buttonstyle.TButton",command=lambda: search_artist(enter_name))
-        search_btn.grid(row=2,column=7,padx=10,pady=10)
+        search_btn.grid(row=2,column=5,padx=10,pady=10)
 
     def search_artist(enter_name):
         row=1
@@ -80,7 +91,7 @@ def load_artist_profile(tab):
                     delete_btn = ttk.Button(Totlist, text="Delete", style="Buttonstyle.TButton", command=lambda artist_id=artist_id: delete_artist(artist_id))
                     delete_btn.grid(row=row,column=4, padx=10, pady=5)
                     row=row+1
-                    tk.Label(Totlist, text=f"Bio: {artist[2]}", font=('Palatino Linotype', 12),bg="#fbf2ee").grid(row=row,column=0,columnspan=3,sticky="ew")
+                    tk.Label(Totlist, text=f"Bio: {artist[2]}", font=('Palatino Linotype', 12),bg="#fbf2ee",wraplength=375).grid(row=row,column=0,columnspan=3,sticky="ew")
                     edit_btn = ttk.Button(Totlist, text="Edit", style="Buttonstyle.TButton", command=lambda artist_id=artist_id: edit_details(artist_id))
                     edit_btn.grid(row=row,column=4, padx=10, pady=5)
                     row=row+1
@@ -108,11 +119,14 @@ def load_artist_profile(tab):
             delete_btn = ttk.Button(Totlist, text="Delete", style="Buttonstyle.TButton", command=lambda artist_id=artist_id: delete_artist(artist_id))
             delete_btn.grid(row=row,column=4, padx=10, pady=5)
             row=row+1
-            tk.Label(Totlist, text=f"Bio: {artist[2]}", font=('Palatino Linotype', 12),bg="#fbf2ee").grid(row=row,column=0,columnspan=3,sticky="ew")
+            tk.Label(Totlist, text=f"Bio: {artist[2]}", font=('Palatino Linotype', 12),bg="#fbf2ee",wraplength=375).grid(row=row,column=0,columnspan=3,sticky="ew")
             edit_btn = ttk.Button(Totlist, text="Edit", style="Buttonstyle.TButton", command=lambda artist_id=artist_id: edit_details(artist_id))
             edit_btn.grid(row=row,column=4, padx=10, pady=5)
             row=row+1
             tk.Label(Totlist, text="-"*50,bg="#fbf2ee").grid(row=row,column=0,columnspan=3,sticky="ew")
+        canvas.update_idletasks()  # Process all pending geometry changes
+        canvas.configure(scrollregion=canvas.bbox("all"))  # Update scrollable region
+
 
     def edit_details(id):
         if id:
@@ -120,17 +134,17 @@ def load_artist_profile(tab):
             clear_row(2, tab)
             clear_row(3, tab)
             name=ttk.Label(tab,text="Enter edited Name: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-            name.grid(row=1,column=7,padx=10,pady=10)
+            name.grid(row=1,column=5,padx=10,pady=10)
             enter_name = ttk.Entry(tab, style="EntryButton.TEntry")
-            enter_name.grid(row=1,column=8,padx=10,pady=10)
+            enter_name.grid(row=1,column=6,padx=10,pady=10)
 
             bio=ttk.Label(tab,text="Enter edited Bio: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-            bio.grid(row=2,column=7,padx=10,pady=10)
+            bio.grid(row=2,column=5,padx=10,pady=10)
             enter_bio=ttk.Entry(tab,style="EntryButton.TEntry")
-            enter_bio.grid(row=2,column=8,padx=10,pady=10)
+            enter_bio.grid(row=2,column=6,padx=10,pady=10)
 
             add_button=ttk.Button(tab,text="Edit Artist Details",style="Buttonstyle.TButton",command=lambda:edit_database(id,enter_name,enter_bio))
-            add_button.grid(row=3,column=7,padx=10,pady=10)
+            add_button.grid(row=3,column=5,padx=10,pady=10)
 
     def edit_database(id,enter_name=None,enter_bio=None):
         name=enter_name.get()
@@ -162,10 +176,13 @@ def load_artist_profile(tab):
             execute_query("DELETE FROM Artists WHERE id = (%s)", (id,))
             execute_query("DELETE FROM Artworks WHERE artist_id = (%s)", (id,))
             refresh_list()
+            canvas.update_idletasks()  # Process all pending geometry changes
+            canvas.configure(scrollregion=canvas.bbox("all"))  # Update scrollable region
+
 
 
     refresh_list()
     add_new_btn=ttk.Button(tab,text="Add new Artist",command=create_add_btn,style="Buttonstyle.TButton")
-    add_new_btn.grid(row=0,column=7,padx=10,pady=10,sticky="nw")
+    add_new_btn.grid(row=0,column=5,padx=10,pady=10,sticky="nw")
     search_artist_btn=ttk.Button(tab,text="Search Artist",command=create_search_btn,style="Buttonstyle.TButton")
-    search_artist_btn.grid(row=0,column=8,padx=10,pady=10,sticky="nw")
+    search_artist_btn.grid(row=0,column=6,padx=10,pady=10,sticky="nw")
