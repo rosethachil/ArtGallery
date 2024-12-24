@@ -39,12 +39,13 @@ def load_exhibitions_profile(tab):
     canvas = tk.Canvas(Totlist, bg="#fdf3ee", highlightthickness=0)
     canvas.grid(row=0, column=0, sticky="nsew")
     container_frame = tk.Frame(canvas, bg="#fdf3ee")
-    canvas.create_window((0, 0), window=container_frame, anchor="n")
+    canvas.create_window((0, 0), window=container_frame, anchor="nw")
     
     container_frame.grid_rowconfigure(0, weight=1)
     container_frame.grid_columnconfigure(0, weight=1)
     Totlist.grid_rowconfigure(0, weight=1)
     Totlist.grid_columnconfigure(0, weight=1)
+    Totlist.grid_columnconfigure(1, weight=0)
 
     scrollbar = tk.Scrollbar(Totlist, orient=tk.VERTICAL, command=canvas.yview)
     scrollbar.grid(row=0, column=1, sticky="ns")
@@ -144,7 +145,7 @@ def load_exhibitions_profile(tab):
         location_entry.delete(0, tk.END)
 
     def display_exhibition_details():
-        for widget in Totlist.winfo_children()[2:]:
+        for widget in canvas.winfo_children()[2:]:
             widget.destroy()
         row=0
         selected_exhibition = exhibition_dropdown.get()
@@ -154,27 +155,32 @@ def load_exhibitions_profile(tab):
         exhibition_data = fetch_data("SELECT title, start_date, end_date, location FROM exhibitions WHERE exhibition_id = %s", (exhibition_id,))
         if exhibition_data:
             title, start_date, end_date, location = exhibition_data[0]                
-            details_label = ttk.Label(Totlist,text=f"Exhibition: {title}\nStart Date: {start_date}\nEnd Date: {end_date}\nLocation: {location}",font=('Palatino Linotype', 12),background="#fbf2ee",justify="left")
+            details_label = ttk.Label(canvas,text=f"Exhibition: {title}\nStart Date: {start_date}\nEnd Date: {end_date}\nLocation: {location}",font=('Palatino Linotype', 12),background="#fbf2ee",justify="left")
             details_label.grid(row=row, column=0, columnspan=2, padx=10, pady=10, sticky="w")
             row=row+1
             artworks = fetch_data("SELECT artworks.title FROM artwork_exhibitions INNER JOIN artworks ON artwork_exhibitions.artwork_id = artworks.id WHERE artwork_exhibitions.exhibition_id = %s", (exhibition_id,))
 
             if artworks:
-                artworks_label = ttk.Label(Totlist,text="Artworks:",font=('Palatino Linotype', 12),wraplength=350,background="#fbf2ee")
+                artworks_label = ttk.Label(canvas,text="Artworks:",font=('Palatino Linotype', 12),wraplength=350,background="#fbf2ee")
                 artworks_label.grid(row=row, column=0, columnspan=2, padx=10, pady=5, sticky="w")
                 row=row+1
 
                 # List all artworks
                 for artwork in artworks:
-                    artwork_label = ttk.Label(Totlist,text=f"- {artwork[0]}",font=('Palatino Linotype', 12),wraplength=350,background="#fbf2ee")
+                    artwork_label = ttk.Label(canvas,text=f"- {artwork[0]}",font=('Palatino Linotype', 12),wraplength=350,background="#fbf2ee")
                     artwork_label.grid(row=row, column=0, columnspan=2, padx=10, pady=2, sticky="w")
                     row=row+1
             canvas.update_idletasks()
             canvas.configure(scrollregion=canvas.bbox("all"))
         else:
-            no_artworks_label = ttk.Label(Totlist,text="No artworks found for this exhibition.",font=('Palatino Linotype', 12),background="#fbf2ee")
+            no_artworks_label = ttk.Label(canvas,text="No artworks found for this exhibition.",font=('Palatino Linotype', 12),background="#fbf2ee")
             no_artworks_label.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="w")
     exhibition_dropdown.bind("<<ComboboxSelected>>", lambda e: display_exhibition_details())
+    canvas.update_idletasks()  # Ensures all geometry changes are applied
+    canvas.configure(scrollregion=canvas.bbox("all"))
+    container_frame.update_idletasks()  # Updates geometry changes
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
 
     def refresh_list():
         display_exhibition_details()

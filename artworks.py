@@ -5,6 +5,16 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from db import fetch_data,execute_query
 
+artist_details = []
+combobox = None
+
+def refresh_artist_dropdown():
+    global artist_details, combobox
+    artist_details = fetch_data("SELECT id, name FROM Artists")
+    artist_names = [artist[1] for artist in artist_details]
+    combobox['values'] = artist_names  # Update the dropdown
+    combobox.set("Select an artist")
+
 def load_artworks(tab):
     # Button and frame styles
     style = ttk.Style(tab)
@@ -62,44 +72,57 @@ def load_artworks(tab):
 
     add_details_frame=tk.Frame(tab,bg="#f8e5dc", borderwidth=2)
     add_details_frame.grid(row=0,column=1,sticky="nsew",padx=15,pady=15)
+    
+    def add_artwork_btns():
+        for widget in add_details_frame.winfo_children():
+            widget.destroy()
+        title=ttk.Label(add_details_frame,text="Enter Title of Art Work: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        title.grid(row=0,column=0,padx=10,pady=10)
+        enter_title = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_title.grid(row=0,column=1,padx=10,pady=10)
 
-    title=ttk.Label(add_details_frame,text="Enter Title of Art Work: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    title.grid(row=0,column=0,padx=10,pady=10)
-    enter_title = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_title.grid(row=0,column=1,padx=10,pady=10)
+        year=ttk.Label(add_details_frame,text="Enter Year: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        year.grid(row=1,column=0,padx=10,pady=10)
+        enter_year = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_year.grid(row=1,column=1,padx=10,pady=10)
 
-    year=ttk.Label(add_details_frame,text="Enter Year: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    year.grid(row=1,column=0,padx=10,pady=10)
-    enter_year = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_year.grid(row=1,column=1,padx=10,pady=10)
+        artist_id=ttk.Label(add_details_frame,text="Enter Artist ID: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        artist_id.grid(row=2,column=0,padx=10,pady=10)
+        enter_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_id.grid(row=2,column=1,padx=10,pady=10)
+        artist_details=fetch_data("SELECT id, name FROM Artists")
+        artist_names=[artist[1] for artist in artist_details]
+        combobox = ttk.Combobox(add_details_frame, values=artist_names, width=20, font=('Segoe UI', 12))
+        combobox.set("Select an artist")  # Default text
+        combobox.grid(pady=10)
 
-    artist_id=ttk.Label(add_details_frame,text="Enter Artist ID: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    artist_id.grid(row=2,column=0,padx=10,pady=10)
-    enter_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_id.grid(row=2,column=1,padx=10,pady=10)
-    artist_details=fetch_data("SELECT id, name FROM Artists")
-    artist_names=[artist[1] for artist in artist_details]
-    combobox = ttk.Combobox(add_details_frame, values=artist_names, width=20, font=('Segoe UI', 12))
-    combobox.set("Select an artist")  # Default text
-    combobox.grid(pady=10)
-
-    def on_select(event):
-        selected_name = combobox.get()
+        def on_select(event):
+            selected_name = combobox.get()
     
     # Find the corresponding artist ID for the selected name
-        for artist in artist_details:
-            if artist[1] == selected_name:  # artist[1] is the name
-                artist_id = artist[0]  # artist[0] is the ID
-                enter_id.delete(0, tk.END)  # Clear the entry box
-                enter_id.insert(0, str(artist_id))  # Insert the ID into the entry box
-                break
+            for artist in artist_details:
+                if artist[1] == selected_name:  # artist[1] is the name
+                    artist_id = artist[0]  # artist[0] is the ID
+                    enter_id.delete(0, tk.END)  # Clear the entry box
+                    enter_id.insert(0, str(artist_id))  # Insert the ID into the entry box
+                    break
 
-    combobox.bind("<<ComboboxSelected>>", on_select)
+        pic=ttk.Label(add_details_frame,text="Select Picture ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        pic.grid(row=4,column=0,padx=10,pady=10)
+        enter_pic = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_pic.grid(row=4,column=1,padx=10,pady=10)
+        select_pic=ttk.Button(add_details_frame,text="Select Picture",command = lambda: select_picture(enter_pic) ,style="Buttonstyle.TButton")
+        select_pic.grid(row=4,column=2,padx=10,pady=10,sticky="nw")
+        add_btn=ttk.Button(add_details_frame,text="Add new Artwork",command= lambda: add_artwork_detail_check(enter_title,enter_year,enter_id,enter_pic),style="Buttonstyle.TButton")
+        add_btn.grid(row=5,column=0,padx=10,pady=10,sticky="nsew")
+        combobox.bind("<<ComboboxSelected>>", on_select)
 
-    pic=ttk.Label(add_details_frame,text="Select Picture ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    pic.grid(row=4,column=0,padx=10,pady=10)
-    enter_pic = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_pic.grid(row=4,column=1,padx=10,pady=10)
+    def add_artwork_detail_check(enter_title,enter_year,enter_id,enter_pic):
+        if not enter_title.get() or not enter_year.get() or not enter_id.get() or not enter_pic.get():
+            messagebox.showerror("Error", "All fields must be filled.")
+            clear_all()
+            return
+        add_artwork_detail(enter_title,enter_year,enter_id,enter_pic)
     
     def refresh():
         for widget in Totlist.winfo_children():
@@ -225,7 +248,7 @@ def load_artworks(tab):
         cancel_button = ttk.Button(popup, text="Cancel", command=popup.destroy, style="Buttonstyle.TButton")
         cancel_button.grid(row=4, column=0, columnspan=2, pady=10)
 
-    def select_picture():
+    def select_picture(enter_pic):
         file_path = filedialog.askopenfilename(title="Select an Image", filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
 
         if file_path:
@@ -233,7 +256,7 @@ def load_artworks(tab):
             enter_pic.delete(0, tk.END)
             enter_pic.insert(0, file_path)
 
-    def add_artwork_detail():
+    def add_artwork_detail(enter_title,enter_year,enter_id,enter_pic):
         title=enter_title.get()
         year=enter_year.get()
         artist_id=enter_id.get()
@@ -247,9 +270,15 @@ def load_artworks(tab):
         enter_year.delete(0, tk.END)
         enter_id.delete(0, tk.END)
         enter_pic.delete(0, tk.END)
+        clear_all()
+
+    def clear_all():
+        for widget in add_details_frame.winfo_children():
+            widget.destroy()
+        add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_btns,style="Buttonstyle.TButton")
+        add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
 
     refresh()
-    select_pic=ttk.Button(add_details_frame,text="Select Picture",command=select_picture,style="Buttonstyle.TButton")
-    select_pic.grid(row=4,column=2,padx=10,pady=10,sticky="nw")
-    add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_detail,style="Buttonstyle.TButton")
-    add_new_btn.grid(row=5,column=0,padx=10,pady=10,sticky="nsew")
+    
+    add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_btns,style="Buttonstyle.TButton")
+    add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
