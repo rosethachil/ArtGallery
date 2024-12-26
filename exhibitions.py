@@ -52,78 +52,36 @@ def load_exhibitions_profile(tab):
     canvas.configure(yscrollcommand=scrollbar.set)
     canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
-    title=ttk.Label(add_details_frame,text="Add New Exhibition details: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    title.grid(row=0,column=0,columnspan=2,padx=10,pady=10)
+    def add_exhibition_detail_btn():
+        for widget in add_details_frame.winfo_children()[2:]:
+            widget.destroy()
+        title=ttk.Label(add_details_frame,text="Add New Exhibition details: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        title.grid(row=1,column=0,columnspan=2,padx=10,pady=10)
 
-    name=ttk.Label(add_details_frame,text="Enter Name of exhibition: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    name.grid(row=1,column=0,padx=10,pady=10)
-    enter_name = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_name.grid(row=1,column=1,padx=10,pady=10)
+        name=ttk.Label(add_details_frame,text="Enter Name of exhibition: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        name.grid(row=2,column=0,padx=10,pady=10)
+        enter_name = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_name.grid(row=2,column=1,padx=10,pady=10)
 
-    start_date=ttk.Label(add_details_frame, text="Start Date:", font=("Sitka Text", 12), background="#f8e5dc")
-    start_date.grid(row=2, column=0, padx=10, pady=10, sticky="n")
-    start_date_entry = DateEntry(add_details_frame, font=("Sitka Text", 12), date_pattern="dd-mm-yyyy")
-    start_date_entry.grid(row=2, column=1, padx=10, pady=10, sticky="n")
+        start_date=ttk.Label(add_details_frame, text="Start Date:", font=("Sitka Text", 12), background="#f8e5dc")
+        start_date.grid(row=3, column=0, padx=10, pady=10, sticky="n")
+        start_date_entry = DateEntry(add_details_frame, font=("Sitka Text", 12), date_pattern="dd-mm-yyyy")
+        start_date_entry.grid(row=3, column=1, padx=10, pady=10, sticky="n")
 
-    end_date=ttk.Label(add_details_frame, text="End Date:", font=("Sitka Text", 12), background="#f8e5dc")
-    end_date.grid(row=3, column=0, padx=10, pady=10, sticky="n")
-    end_date_entry = DateEntry(add_details_frame, font=("Sitka Text", 12), date_pattern="dd-mm-yyyy")
-    end_date_entry.grid(row=3, column=1, padx=10, pady=10, sticky="n")
+        end_date=ttk.Label(add_details_frame, text="End Date:", font=("Sitka Text", 12), background="#f8e5dc")
+        end_date.grid(row=4, column=0, padx=10, pady=10, sticky="n")
+        end_date_entry = DateEntry(add_details_frame, font=("Sitka Text", 12), date_pattern="dd-mm-yyyy")
+        end_date_entry.grid(row=4, column=1, padx=10, pady=10, sticky="n")
 
-    location=ttk.Label(add_details_frame, text="Location:", font=("Sitka Text", 12), background="#f8e5dc")
-    location.grid(row=4, column=0, padx=10, pady=10, sticky="n")
-    location_entry = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    location_entry.grid(row=4, column=1, padx=10, pady=10, sticky="n")
+        location=ttk.Label(add_details_frame, text="Location:", font=("Sitka Text", 12), background="#f8e5dc")
+        location.grid(row=5, column=0, padx=10, pady=10, sticky="n")
+        location_entry = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        location_entry.grid(row=5, column=1, padx=10, pady=10, sticky="n")
 
-    title=ttk.Label(add_details_frame,text="Add Artwork to Exhibition: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
-    title.grid(row=6,column=0,columnspan=2,padx=10,pady=10)
+        add_exhibition_detail=ttk.Button(add_details_frame,text="Add Exhibition Details",command=lambda:add_exhibition(enter_name,start_date_entry,end_date_entry,location_entry),style="Buttonstyle.TButton")
+        add_exhibition_detail.grid(row=6,column=0,columnspan=2,padx=10,pady=10)
 
-    exhibition_id=tk.Label(add_details_frame, text="Exhibition:", font=("Sitka Text", 12), bg="#fdf3ee")
-    exhibition_id.grid(row=7, column=0, padx=10, pady=5, sticky="e")
-    enter_exhi_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_exhi_id.grid(row=7,column=1,padx=10,pady=10)
-
-    exhibition_details = fetch_data("SELECT exhibition_id, title FROM exhibitions")
-    popup_details_exhi=[]
-    for details in exhibition_details:
-        popup_details_exhi.append(f"{details[0]} - {details[1]}")
-    exhibition_box = ttk.Combobox(add_details_frame, values=popup_details_exhi, width=20, font=('Segoe UI', 12))
-    exhibition_box.set("Select an exhibition")  # Default text
-    exhibition_box.grid(row=8,column=1,pady=10)
-
-    artwork_id=tk.Label(add_details_frame, text="ArtWork:", font=("Sitka Text", 12), bg="#fdf3ee")
-    artwork_id.grid(row=9, column=0, padx=10, pady=5, sticky="e")
-    enter_artwork_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
-    enter_artwork_id.grid(row=9,column=1,padx=10,pady=10)
-
-    artwork_details = fetch_data("SELECT id, title FROM artworks")
-    popup_details_artwork=[]
-    for details in artwork_details:
-        popup_details_artwork.append(f"{details[0]} - {details[1]}")
-    artwork_box = ttk.Combobox(add_details_frame, values=popup_details_artwork, width=20, font=('Segoe UI', 12))
-    artwork_box.set("Select an exhibition")  # Default text
-    artwork_box.grid(row=10,column=1,pady=10)
-
-    def on_select_exhibition():
-        selected_name = exhibition_box.get()
-        for exhibition in exhibition_details:
-            if selected_name == f"{exhibition[0]} - {exhibition[1]}":
-                enter_exhi_id.delete(0, tk.END)
-                enter_exhi_id.insert(0, exhibition[0])
-                break
-
-    def on_select_artwork():
-        selected_name = artwork_box.get()
-        for artwork in artwork_details:
-            if selected_name == f"{artwork[0]} - {artwork[1]}":
-                enter_artwork_id.delete(0, tk.END)
-                enter_artwork_id.insert(0, artwork[0])
-                break
-    
-    exhibition_box.bind("<<ComboboxSelected>>", lambda e: on_select_exhibition())
-    artwork_box.bind("<<ComboboxSelected>>", lambda e: on_select_artwork())
-
-    def add_exhibition_detail():
+    def add_exhibition(enter_name,start_date_entry,end_date_entry,location_entry):
         name = enter_name.get()
         start_date = start_date_entry.get()
         end_date = end_date_entry.get()
@@ -136,13 +94,34 @@ def load_exhibitions_profile(tab):
             return
         if name and start_date and end_date and location:
             execute_query("INSERT INTO Exhibitions (title, start_date, end_date, location) VALUES (%s, %s, %s, %s)", (name, start_date, end_date, location))
-            refresh_list()
         else:
             messagebox.showerror("Error", "All fields are required")
         enter_name.delete(0, tk.END)
         start_date_entry.delete(0, tk.END)
         end_date_entry.delete(0, tk.END)
         location_entry.delete(0, tk.END)
+        for widget in add_details_frame.winfo_children()[2:]:
+            widget.forget()
+        add_new_btn=ttk.Button(add_details_frame,text="Add Exhibition Detail",command=add_exhibition_detail_btn,style="Buttonstyle.TButton")
+        add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
+        add_exhi_detail=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_exhibition_btn,style="Buttonstyle.TButton")
+        add_exhi_detail.grid(row=0,column=1,padx=10,pady=10,sticky="nsew")
+
+    def add_artwork_exhibition_(enter_exhi_id,enter_artwork_id):
+        exhibition_id = enter_exhi_id.get()
+        artwork_id = enter_artwork_id.get()
+        if exhibition_id and artwork_id:
+            execute_query("INSERT INTO artwork_exhibitions (exhibition_id, artwork_id) VALUES (%s, %s)", (exhibition_id, artwork_id))
+        else:
+            messagebox.showerror("Error", "All fields are required")
+        enter_exhi_id.delete(0, tk.END)
+        enter_artwork_id.delete(0, tk.END)
+        for widget in canvas.winfo_children()[2:]:
+            widget.forget()
+        add_new_btn=ttk.Button(add_details_frame,text="Add Exhibition Detail",command=add_exhibition_detail_btn,style="Buttonstyle.TButton")
+        add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
+        add_exhi_detail=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_exhibition_btn,style="Buttonstyle.TButton")
+        add_exhi_detail.grid(row=0,column=1,padx=10,pady=10,sticky="nsew")
 
     def display_exhibition_details():
         for widget in canvas.winfo_children()[2:]:
@@ -175,29 +154,69 @@ def load_exhibitions_profile(tab):
         else:
             no_artworks_label = ttk.Label(canvas,text="No artworks found for this exhibition.",font=('Palatino Linotype', 12),background="#fbf2ee")
             no_artworks_label.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+
+    def add_artwork_exhibition_btn():
+        if add_details_frame.winfo_exists():
+            children = add_details_frame.winfo_children()
+            if len(children) > 2:
+                for widget in children[2:]:
+                    widget.destroy()
+        title=ttk.Label(add_details_frame,text="Add Artwork to Exhibition: ",font=('Sitka Text Semibold', 12),background="#f8e5dc")
+        title.grid(row=1,column=0,columnspan=2,padx=10,pady=10)
+
+        exhibition_id=tk.Label(add_details_frame, text="Exhibition:", font=("Sitka Text", 12), bg="#fdf3ee")
+        exhibition_id.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+        enter_exhi_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_exhi_id.grid(row=2,column=1,padx=10,pady=10)
+
+        exhibition_details = fetch_data("SELECT exhibition_id, title FROM exhibitions")
+        popup_details_exhi=[]
+        for details in exhibition_details:
+            popup_details_exhi.append(f"{details[0]} - {details[1]}")
+        exhibition_box = ttk.Combobox(add_details_frame, values=popup_details_exhi, width=20, font=('Segoe UI', 12))
+        exhibition_box.set("Select an exhibition")  # Default text
+        exhibition_box.grid(row=3,column=1,pady=10)
+        exhibition_box.bind("<<ComboboxSelected>>", lambda e: on_select_exhibition(exhibition_box,enter_exhi_id))
+
+        artwork_id=tk.Label(add_details_frame, text="ArtWork:", font=("Sitka Text", 12), bg="#fdf3ee")
+        artwork_id.grid(row=4, column=0, padx=10, pady=5, sticky="e")
+        enter_artwork_id = ttk.Entry(add_details_frame, style="EntryButton.TEntry")
+        enter_artwork_id.grid(row=4,column=1,padx=10,pady=10)
+
+        artwork_details = fetch_data("SELECT id, title FROM artworks")
+        popup_details_artwork=[]
+        for details in artwork_details:
+            popup_details_artwork.append(f"{details[0]} - {details[1]}")
+        artwork_box = ttk.Combobox(add_details_frame, values=popup_details_artwork, width=20, font=('Segoe UI', 12))
+        artwork_box.set("Select an artwork")  # Default text
+        artwork_box.grid(row=5,column=1,pady=10)
+        artwork_box.bind("<<ComboboxSelected>>", lambda e: on_select_artwork(artwork_box,enter_artwork_id,artwork_details))
+
+        add_artwork_exhibition=ttk.Button(add_details_frame,text="Add Artwork to Exhibition",command=lambda:add_artwork_exhibition_(enter_exhi_id,enter_artwork_id),style="Buttonstyle.TButton")
+        add_artwork_exhibition.grid(row=6,column=0,columnspan=2,padx=10,pady=10)
+
+    def on_select_exhibition(exhibition_box,enter_exhi_id):
+        selected_name = exhibition_box.get()
+        for exhibition in exhibition_details:
+            if selected_name == f"{exhibition[0]} - {exhibition[1]}":
+                enter_exhi_id.delete(0, tk.END)
+                enter_exhi_id.insert(0, exhibition[0])
+                break
+
+    def on_select_artwork(artwork_box,enter_artwork_id,artwork_details):
+        selected_name = artwork_box.get()
+        for artwork in artwork_details:
+            if selected_name == f"{artwork[0]} - {artwork[1]}":
+                enter_artwork_id.delete(0, tk.END)
+                enter_artwork_id.insert(0, artwork[0])
+                break
+    
     exhibition_dropdown.bind("<<ComboboxSelected>>", lambda e: display_exhibition_details())
     canvas.update_idletasks()  # Ensures all geometry changes are applied
     canvas.configure(scrollregion=canvas.bbox("all"))
     container_frame.update_idletasks()  # Updates geometry changes
     canvas.configure(scrollregion=canvas.bbox("all"))
-
-
-    def refresh_list():
-        display_exhibition_details()
-
-    def add_artwork_exhibition():
-        exhibition_id = enter_exhi_id.get()
-        artwork_id = enter_artwork_id.get()
-        if exhibition_id and artwork_id:
-            execute_query("INSERT INTO artwork_exhibitions (exhibition_id, artwork_id) VALUES (%s, %s)", (exhibition_id, artwork_id))
-            refresh_list()
-        else:
-            messagebox.showerror("Error", "All fields are required")
-        enter_exhi_id.delete(0, tk.END)
-        enter_artwork_id.delete(0, tk.END)
-
-    refresh_list()
-    add_new_btn=ttk.Button(add_details_frame,text="Add Exhibition Detail",command=add_exhibition_detail,style="Buttonstyle.TButton")
-    add_new_btn.grid(row=5,column=0,padx=10,pady=10,sticky="nsew")
-    add_exhi_detail=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_exhibition,style="Buttonstyle.TButton")
-    add_exhi_detail.grid(row=11,column=0,padx=10,pady=10,sticky="nsew")
+    add_new_btn=ttk.Button(add_details_frame,text="Add Exhibition Detail",command=add_exhibition_detail_btn,style="Buttonstyle.TButton")
+    add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
+    add_exhi_detail=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_exhibition_btn,style="Buttonstyle.TButton")
+    add_exhi_detail.grid(row=0,column=1,padx=10,pady=10,sticky="nsew")

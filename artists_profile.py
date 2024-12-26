@@ -81,6 +81,7 @@ def load_artist_profile(tab):
             widget.destroy()
         if name:
             artists = fetch_data("SELECT * FROM artists WHERE name = %s", (name,))
+            print(artists)
             if artists:
                 for artist in artists:
                     artist_id = artist[0]
@@ -186,3 +187,5 @@ def load_artist_profile(tab):
     add_new_btn.grid(row=0,column=5,padx=10,pady=10,sticky="nw")
     search_artist_btn=ttk.Button(tab,text="Search Artist",command=create_search_btn,style="Buttonstyle.TButton")
     search_artist_btn.grid(row=0,column=6,padx=10,pady=10,sticky="nw")
+    refresh_btn=ttk.Button(tab,text="Refresh list", command=refresh_list,style="Buttonstyle.TButton" )
+    refresh_btn.grid(row=10,column=5,padx=10,pady=10,sticky="nw")

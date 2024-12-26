@@ -5,16 +5,6 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from db import fetch_data,execute_query
 
-artist_details = []
-combobox = None
-
-def refresh_artist_dropdown():
-    global artist_details, combobox
-    artist_details = fetch_data("SELECT id, name FROM Artists")
-    artist_names = [artist[1] for artist in artist_details]
-    combobox['values'] = artist_names  # Update the dropdown
-    combobox.set("Select an artist")
-
 def load_artworks(tab):
     # Button and frame styles
     style = ttk.Style(tab)
@@ -43,7 +33,7 @@ def load_artworks(tab):
     tab.grid_columnconfigure(1, weight=0)  # Space for scrollbar (weight=0 prevents extra space)
     tab.grid_rowconfigure(0, weight=1)
     content_frame.grid_rowconfigure(0, weight=1)  # Allow canvas to stretch
-    content_frame.grid_columnconfigure(0, weight=0)  # Prevent column 0 from taking extra space
+    content_frame.grid_columnconfigure(0, weight=1)  # Prevent column 0 from taking extra space
     content_frame.grid_columnconfigure(1, weight=1) 
 
 # Create a canvas for scrollable content
@@ -55,12 +45,13 @@ def load_artworks(tab):
     canvas.create_window((0, 0), window=container_frame, anchor="n")  # Anchor to top-center
 
 # Configure the container frame to stretch properly
-    container_frame.grid_rowconfigure(0, weight=1)  # Allow Totlist to center vertically
     container_frame.grid_columnconfigure(0, weight=1)
+    container_frame.grid_columnconfigure(1, weight=1)
 
 # Create the actual content frame (Totlist) inside the container frame
     Totlist = tk.Frame(container_frame, bg="#fdf3ee")
-    Totlist.grid(row=0, column=0, padx=20, pady=20)
+    Totlist.grid(row=0, column=0, padx=5, pady=5)
+    Totlist.grid_columnconfigure(0,weight=1)
 
 # Add a vertical scrollbar for the canvas
     scrollbar = tk.Scrollbar(content_frame, orient=tk.VERTICAL, command=canvas.yview)
@@ -149,10 +140,10 @@ def load_artworks(tab):
             tk.Label(Totlist, text=details_text, font=("Sitka Text", 12), bg="#f8e5dc").grid(row=row, column=0, columnspan=2,sticky="n", padx=10, pady=5)
             row+=1
             details_text2 = f"Title: {title},    Year: {year}"
-            tk.Label(Totlist, text=details_text2, font=("Sitka Text", 12), bg="#f8e5dc").grid(row=row, column=0, columnspan=2,sticky="n",padx=10, pady=5)
+            tk.Label(Totlist, text=details_text2, font=("Sitka Text", 12), bg="#f8e5dc",wraplength=325).grid(row=row, column=0, columnspan=2,sticky="n",padx=10, pady=5)
             row+=1
             Name_artist=f"Name of Artist: {artist_name} "
-            tk.Label(Totlist, text=Name_artist, font=("Sitka Text", 12), bg="#f8e5dc").grid(row=row, column=0, columnspan=2,sticky="n", padx=10, pady=5)
+            tk.Label(Totlist, text=Name_artist, font=("Sitka Text", 12), bg="#f8e5dc",wraplength=325).grid(row=row, column=0, columnspan=2,sticky="n", padx=10, pady=5)
             row+=1
             image_path=None
             for image in artwork_image:
@@ -162,16 +153,16 @@ def load_artworks(tab):
             if image_path:
                 try:
                     img = Image.open(image_path)
-                    img = img.resize((325,200), Image.Resampling.LANCZOS)
+                    img = img.resize((400,200), Image.Resampling.LANCZOS)
                     img_tk = ImageTk.PhotoImage(img)
                     img_label = tk.Label(Totlist, image=img_tk, bg="#f8e5dc")
                     img_label.image = img_tk
-                    img_label.grid(row=row, column=0, padx=10, pady=5,columnspan=2)
+                    img_label.grid(row=row, column=0, padx=5, pady=5,columnspan=2)
                     row+=1
                     edit_button = ttk.Button(Totlist, text="Edit",image=edit_image,command=lambda artwork_id=artwork_id: edit_details(artwork_id), compound="left", style="Buttonstyle.TButton")
                     edit_button.grid(row=row, column=0, padx=10, pady=10)
                     delete_button = ttk.Button(Totlist,text="Delete", image=delete_image,command=lambda artwork_id=artwork_id: delete_record(artwork_id), compound="left", style="Buttonstyle.TButton")
-                    delete_button.grid(row=row, column=1, padx=10, pady=10)
+                    delete_button.grid(row=row, column=1, padx=10, pady=10,sticky="w")
                     row+=1
                     tk.Label(Totlist, text="-"*50,bg="#fdf3ee").grid(row=row,column=0,columnspan=3,sticky="ew")
                     row+=1
@@ -186,8 +177,8 @@ def load_artworks(tab):
     
     def delete_record(id):
         if id:
-            execute_query("DELETE FROM images WHERE artwork_id = %s", (id,))
             execute_query("DELETE FROM Artworks WHERE id = %s", (id,))
+            execute_query("DELETE FROM images WHERE artwork_id = %s", (id,))
             refresh()
 
     def edit_details(id):
@@ -197,7 +188,7 @@ def load_artworks(tab):
             return
 
         artwork = details[0]  # Fetch the first (and only) result
-        current_id, current_title, current_year, current_artist_id = artwork
+        current_id,current_title, current_year, current_artist_id = artwork
 
     # Create a popup window
         popup = tk.Toplevel()
