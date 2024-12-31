@@ -14,6 +14,7 @@ A user-friendly digital platform to explore artist profiles, artworks, and exhib
 ## Table of Contents 📜
 - [Installation](#installation)
 - [Usage](#usage)
+- [Project Structure](#project-structure)
 
 
 ## Installation 🔧
@@ -50,7 +51,7 @@ A user-friendly digital platform to explore artist profiles, artworks, and exhib
 2. Navigate through the application tabs to manage artists, artworks, and exhibitions.
 3. Add images to the images/ folder to associate them with artworks.
 
-Project Structure 🗂️
+### Project Structure 🗂️
     ```bash
     📦 Digital Art Gallery
     ├── app.py                # Main application entry point
