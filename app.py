@@ -10,7 +10,7 @@ root.geometry("1000x750")
 root.config(bg="#735559")
 
 style = ttk.Style()
-style.theme_use('default')  # Ensure you are using a style that allows customizations
+style.theme_use('default')
 style.configure("TNotebook",background="#8e5c66", borderwidth=0,)
 style.configure("TNotebook.Tab",background="#8e5c66",foreground="#e2c1b2",padding=(10, 10),font=('Dutch801 XBd BT', 12))
 style.map("TNotebook.Tab",background=[("selected", "#e2c1b2")],foreground=[("selected", "#3c2c2e")],)
@@ -35,6 +35,5 @@ load_artworks(artwork_tab)
 exhibitions_tab = tk.Frame(notebook, bg="#f8e5dc",padx=10,pady=10)
 notebook.add(exhibitions_tab, text="Exhibitions")
 load_exhibitions_profile(exhibitions_tab)
-
 
 root.mainloop()

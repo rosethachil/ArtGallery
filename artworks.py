@@ -4,7 +4,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from db import fetch_data,execute_query
-
+ 
 def load_artworks(tab):
     # Button and frame styles
     style = ttk.Style(tab)
@@ -177,8 +177,9 @@ def load_artworks(tab):
     
     def delete_record(id):
         if id:
-            execute_query("DELETE FROM Artworks WHERE id = %s", (id,))
+            execute_query("DELETE FROM artwork_exhibitions WHERE artwork_id = %s",(id,))
             execute_query("DELETE FROM images WHERE artwork_id = %s", (id,))
+            execute_query("DELETE FROM Artworks WHERE id = %s", (id,))
             refresh()
 
     def edit_details(id):
@@ -268,8 +269,12 @@ def load_artworks(tab):
             widget.destroy()
         add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_btns,style="Buttonstyle.TButton")
         add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
+        refresh_btn=ttk.Button(add_details_frame,text="Refresh list", command=lambda: refresh(),style="Buttonstyle.TButton" )
+        refresh_btn.grid(row=10,column=0,padx=10,pady=10,sticky="nw")
+
 
     refresh()
-    
     add_new_btn=ttk.Button(add_details_frame,text="Add new Artwork",command=add_artwork_btns,style="Buttonstyle.TButton")
     add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
+    refresh_btn=ttk.Button(add_details_frame,text="Refresh list", command=lambda: refresh(),style="Buttonstyle.TButton" )
+    refresh_btn.grid(row=10,column=0,padx=10,pady=10,sticky="nw")

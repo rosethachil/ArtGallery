@@ -12,8 +12,8 @@ def load_exhibitions_profile(tab):
     style.map("Buttonstyle.TButton", background=[("!active", "#ad7a77"), ("active", "#a83d4c")])
     style.configure("EntryButton.TEntry", font=('Segoe UI Semibold', 12), fieldbackground="#cbb1a0", foreground="#5C4531", bordercolor="#735559", padding=[5, 2])
 
-    tab.grid_columnconfigure(0, weight=1)  # Content frame (artwork details)
-    tab.grid_columnconfigure(1, weight=0)  # The second column (add_details_frame) remains fixed width
+    tab.grid_columnconfigure(0, weight=1)
+    tab.grid_columnconfigure(1, weight=0)
     tab.grid_columnconfigure(2, weight=0)
 
     content_frame = tk.Frame(tab, bg="#f8e5dc", borderwidth=2)
@@ -212,9 +212,9 @@ def load_exhibitions_profile(tab):
                 break
     
     exhibition_dropdown.bind("<<ComboboxSelected>>", lambda e: display_exhibition_details())
-    canvas.update_idletasks()  # Ensures all geometry changes are applied
+    canvas.update_idletasks()
     canvas.configure(scrollregion=canvas.bbox("all"))
-    container_frame.update_idletasks()  # Updates geometry changes
+    container_frame.update_idletasks()
     canvas.configure(scrollregion=canvas.bbox("all"))
     add_new_btn=ttk.Button(add_details_frame,text="Add Exhibition Detail",command=add_exhibition_detail_btn,style="Buttonstyle.TButton")
     add_new_btn.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")

@@ -174,8 +174,10 @@ def load_artist_profile(tab):
 
     def delete_artist(id):
         if id:
-            execute_query("DELETE FROM Artists WHERE id = (%s)", (id,))
+            execute_query("DELETE FROM Artwork_exhibitions WHERE artwork_id IN (SELECT id FROM Artworks WHERE artist_id = (%s))", (id,))
+            execute_query("DELETE FROM Images WHERE artwork_id IN (SELECT id FROM Artworks WHERE artist_id = (%s))", (id,))
             execute_query("DELETE FROM Artworks WHERE artist_id = (%s)", (id,))
+            execute_query("DELETE FROM Artists WHERE id = (%s)", (id,))
             refresh_list()
             canvas.update_idletasks()  # Process all pending geometry changes
             canvas.configure(scrollregion=canvas.bbox("all"))  # Update scrollable region
