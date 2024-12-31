@@ -36,3 +36,8 @@ Verify the database setup matches the application requirements:
 Artists Table: Includes fields id, name, and bio.
 Artworks Table: Includes fields id, name, artist_id, and description.
 Exhibitions Table: Links artworks and exhibitions.
+
+### Usage 🎯
+Launch the app by running: python app.py
+Navigate through the application tabs to manage artists, artworks, and exhibitions.
+Add images to the images/ folder to associate them with artworks.
