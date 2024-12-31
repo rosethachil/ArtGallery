@@ -11,3 +11,18 @@ A user-friendly digital platform to explore artist profiles, artworks, and exhib
 - Intuitive and customizable GUI.
 
 ---
+## Table of Contents 📜
+- [Installation](#installation)
+- [Usage](#usage)
+
+
+## Installation 🔧
+
+### Install Dependencies
+1. Ensure you have Python installed (version 3.7 or higher recommended).  
+2. Install the required Python library by running:  
+   ```bash
+   pip install mysql-connector-python
+
+
+Set Up the Database
