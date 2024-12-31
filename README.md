@@ -49,3 +49,15 @@ A user-friendly digital platform to explore artist profiles, artworks, and exhib
     python app.py
 2. Navigate through the application tabs to manage artists, artworks, and exhibitions.
 3. Add images to the images/ folder to associate them with artworks.
+
+Project Structure 🗂️
+    ```bash
+    📦 Digital Art Gallery
+    ├── app.py                # Main application entry point
+    ├── artists_profile.py    # Artist profile management logic
+    ├── artworks.py           # Artwork managment logic
+    ├── exhibitions.py        # Exhibition management logic
+    ├── db.py                 # Database connection and queries
+    ├── database_dump.sql     # Database schema and initial setup
+    ├── images/               # Directory to store artwork images
+    └── README.md             # Project documentation
