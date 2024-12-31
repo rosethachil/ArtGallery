@@ -25,4 +25,14 @@ A user-friendly digital platform to explore artist profiles, artworks, and exhib
    pip install mysql-connector-python
 
 
-Set Up the Database
+3. Set Up the Database
+Install MySQL if it is not already installed on your system.
+For installation instructions, visit MySQL Downloads.
+Log in to MySQL using the command line: mysql -u root -p
+Create the database: CREATE DATABASE ArtGalleryDB;
+Import the database schema using the provided database_dump.sql file: mysql -u root -p ArtGalleryDB < database_dump.sql
+
+Verify the database setup matches the application requirements:
+Artists Table: Includes fields id, name, and bio.
+Artworks Table: Includes fields id, name, artist_id, and description.
+Exhibitions Table: Links artworks and exhibitions.
